@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 
 const App = () => {
 
@@ -9,10 +9,11 @@ const App = () => {
     const [allData, setallData] = useState([])
 
     const formHandler = (e)=>{
-
+        e.preventDefault();
+        
         const copyUser = [...allData,{userName,userEmail,userImage,userTel}]
         setallData(copyUser)
-        e.preventDefault();
+
 
         setuserEmail('')
         setuserImage('')
@@ -24,14 +25,21 @@ const App = () => {
         updatedData.splice(idx, 1);       
         setallData(updatedData);           
     }
+
+    useEffect(() => {
+        const savedData = localStorage.getItem('allData');
+        if (savedData) {
+            setallData(JSON.parse(savedData));
+        }
+    }, []);
     
-    <button
-        onClick={() => deleteUser(idx)}
-        className='bg-red-500 px-2 rounded-md text-white font-bold mt-3 py-1'>
-        Delete
-    </button>
+    useEffect(() => {
+        if(allData.length>0){
+            localStorage.setItem("allData",JSON.stringify(allData))
+        }
+    }, [allData])
     
-  return (
+return (
     <div className='w-screen h-screen flex'>
         <div className='left bg-blue-400 w-1/3 h-full flex items-center justify-center'>
 
@@ -75,7 +83,7 @@ const App = () => {
                 onChange={(e)=>{
                    setuserTel(e.target.value);
                 }}
-                 maxLength="10" pattern="[0-9]{10}" type="text" id='name' className="mb-3 w-full border border-gray-400 rounded-md p-1 text-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="123-456-7890"/>
+                 maxLength="10" pattern="[0-9]{10}" type="text" id='name' required className="mb-3 w-full border border-gray-400 rounded-md p-1 text-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="123-456-7890"/>
                 <button type="submit" className='bg-green-600 px-4 py-2 rounded-md font-bold text-white w-full'>Submit</button>
             </form>
             <div>
