@@ -8,12 +8,21 @@ const App = () => {
     const [userTel, setuserTel] = useState("")
     const [allData, setallData] = useState([])
 
+    const [editIndex, setEditIndex] = useState(null);
+
     const formHandler = (e)=>{
         e.preventDefault();
         
-        const copyUser = [...allData,{userName,userEmail,userImage,userTel}]
-        setallData(copyUser)
 
+        if (editIndex !== null) {
+          const updatedData = [...allData];
+          updatedData[editIndex] = { userName, userEmail, userImage, userTel };
+          setallData(updatedData);
+          setEditIndex(null);
+        } else {
+          const copyUser = [...allData, { userName, userEmail, userImage, userTel }];
+          setallData(copyUser);
+        }
 
         setuserEmail('')
         setuserImage('')
@@ -25,6 +34,15 @@ const App = () => {
         updatedData.splice(idx, 1);       
         setallData(updatedData);           
     }
+
+    const editUser = (idx) => {
+      const user = allData[idx];
+      setuserName(user.userName);
+      setuserEmail(user.userEmail);
+      setuserImage(user.userImage);
+      setuserTel(user.userTel);
+      setEditIndex(idx);
+    };
 
     useEffect(() => {
         const savedData = localStorage.getItem('allData');
@@ -100,11 +118,18 @@ return (
                         <h4 className='text-1xl'>{elem.userEmail}</h4>
                         <p className='text-sm'>{elem.userTel}</p>
 
-                        <button
+                    <div className='flex items-center justify-between gap-5'>
+                    <button
                         onClick={() => deleteUser(idx)}
                         className='bg-red-500 px-2 rounded-md text-white font-bold mt-3 py-1'>
                         Delete
-                        </button>
+                    </button>
+                    <button
+                        onClick={() => editUser(idx)}
+                        className='bg-green-600 px-2 rounded-md text-white font-bold mt-3 py-1'>
+                        Edit
+                    </button>
+                    </div>
                  </div>
             })}            
         </div>
